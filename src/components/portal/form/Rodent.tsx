@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 const initialRodent = {
-  rodenthor: "",
-  ratmouse_weat: "",
-  ratmouse_liquid: "",
-  kill_block: "",
-  non_poison: "",
-  bayer: "",
   replaced_rodentbox: false,
   replaced_warning_sign: false,
   replaced_insect: false,
@@ -94,60 +87,6 @@ const Rodent: React.FC<RodentProps> = ({ reportID, setCounter, prevStep }) => {
         }}
       >
         <div className="grid grid-cols-2 gap-2">
-          <Label htmlFor="rodenthor">Rodenthor Block (L9396)</Label>
-          <Input
-            name="rodenthor"
-            value={rodent.rodenthor}
-            onChange={handleInput}
-            placeholder="Batch No."
-            type="number"
-          />
-          <Label htmlFor="ratmouse_weat">
-            Supa Kill - Rat & Mouse Weatbait (L 5198)
-          </Label>
-          <Input
-            name="ratmouse_weat"
-            value={rodent.ratmouse_weat}
-            onChange={handleInput}
-            placeholder="Batch No."
-            type="number"
-          />
-          <Label htmlFor="ratmouse_liquid">
-            Supa Kill - Rat & Mouse Liquid (L 5987)
-          </Label>
-          <Input
-            name="ratmouse_liquid"
-            value={rodent.ratmouse_liquid}
-            onChange={handleInput}
-            placeholder="Batch No."
-            type="number"
-          />
-          <Label htmlFor="kill_block">Supa Kill Block (L 6325)</Label>
-          <Input
-            name="kill_block"
-            value={rodent.kill_block}
-            onChange={handleInput}
-            placeholder="Kill Block"
-            type="number"
-          />
-          <Label htmlFor="non_poison">
-            Supa Kill NON POISON Rat & Mouse Block (RDT 1008)
-          </Label>
-          <Input
-            name="non_poison"
-            value={rodent.non_poison}
-            onChange={handleInput}
-            placeholder="Batch No."
-            type="number"
-          />
-          <Label htmlFor="bayer">Bayer Racumin Tracking Powder (L 2800)</Label>
-          <Input
-            name="bayer"
-            value={rodent.bayer}
-            onChange={handleInput}
-            placeholder="Batch No."
-            type="number"
-          />
           <Label htmlFor="replaced_rodentbox">Replaced Rodent Box</Label>
           <input
             type="checkbox"
@@ -172,7 +111,7 @@ const Rodent: React.FC<RodentProps> = ({ reportID, setCounter, prevStep }) => {
             onChange={handleInput}
             className="accent-primary h-5 w-5 mt-1"
           />
-          <Label htmlFor="attention" className="col-span-2">
+          <Label htmlFor="attention" className="col-span-2 mt-10">
             Attention must be given
           </Label>
           <textarea

@@ -138,6 +138,10 @@ const ClientInfo: React.FC<ClientInfoProps> = ({
     )
       return;
     setLoading(true);
+    // Format date as local date string (YYYY-MM-DD) to avoid timezone issues
+    const formattedDate =
+      date instanceof Date ? format(date, "yyyy-MM-dd") : date;
+
     const response: Response = await fetch("/portal_api/save_client.php", {
       method: "POST",
       headers: {
@@ -149,7 +153,7 @@ const ClientInfo: React.FC<ClientInfoProps> = ({
         client_cell: cell,
         client_address: address,
         user_id: userCPO,
-        report_date: date,
+        report_date: formattedDate,
         form_inspection: formInspection,
         form_fumigation: formFumigation,
       }),
@@ -178,9 +182,11 @@ const ClientInfo: React.FC<ClientInfoProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
       {loading && (
-        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center bg-white border border-gray-200 shadow-md rounded-full px-4 py-2">
-          <LoaderCircle className="w-5 h-5 text-gray-600 animate-spin mr-2" />
-          <span className="text-sm text-gray-700">Loading...</span>
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 shadow-md rounded-full px-4 py-2">
+          <LoaderCircle className="w-5 h-5 animate-spin mr-2" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">
+            Loading...
+          </span>
         </div>
       )}
       <div className="w-full h-full py-12">

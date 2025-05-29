@@ -3,7 +3,23 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
+
+// Service-specific chemicals with L numbers
+const service_chemicals = [
+  { title: "Alphathrin", lNumber: "L7850" },
+  { title: "Roach Force", lNumber: "L8652" },
+  { title: "Flushing Agent", lNumber: "L4970" },
+  { title: "Bandit 350, SC", lNumber: "L8001" },
+  { title: "Fly Bait", lNumber: "L7579" },
+];
 
 const initialAreas = {
   area_kitchen: false,
@@ -32,14 +48,11 @@ const initialFor = {
   for_other: "",
 };
 const initialWith = {
-  with_alphathrin: "",
-  with_roach_force: "",
-  with_flushing_agent: "",
-  with_bandit: "",
-  with_fly_bait: "",
-  other: "",
-  other_l_number: "",
-  other_batch_no: "",
+  // New structured approach for poison/chemical selection
+  chemical_selection: "",
+  other_chemical: "",
+  l_number: "",
+  batch_number: "",
   remarks: "",
 };
 
@@ -59,23 +72,52 @@ const Service: React.FC<ServiceProps> = ({
   const [withChem, setWithChem] = useState(initialWith);
   const [loading, setLoading] = useState(false);
 
+  // Helper function to find L number by chemical title
+  const findLNumberByTitle = (title: string): string => {
+    const found = service_chemicals.find((item) => item.title === title);
+    return found ? found.lNumber : "";
+  };
+
   const handleAreaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setAreas((prev) => ({ ...prev, [name]: checked }));
   };
+
   const handleForChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setForPest((prev) => ({ ...prev, [name]: checked }));
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setWithChem((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleOtherArea = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAreas((prev) => ({ ...prev, area_other: e.target.value }));
   };
+
   const handleOtherFor = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForPest((prev) => ({ ...prev, for_other: e.target.value }));
+  };
+
+  const handleChemicalSelectionChange = (value: string) => {
+    if (value === "other") {
+      setWithChem((prev) => ({
+        ...prev,
+        chemical_selection: value,
+        other_chemical: "",
+        l_number: "",
+      }));
+    } else {
+      const lNumber = findLNumberByTitle(value);
+      setWithChem((prev) => ({
+        ...prev,
+        chemical_selection: value,
+        other_chemical: "",
+        l_number: lNumber,
+      }));
+    }
   };
 
   const saveService = async () => {
@@ -199,89 +241,90 @@ const Service: React.FC<ServiceProps> = ({
               className="col-span-2"
             />
           </div>
-        </div>
+        </div>{" "}
         <div>
           <h2 className="text-lg mb-2 text-primary">Treated With</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <Label htmlFor="with_alphathrin">Alphathrin (L 7850)</Label>
-            <Input
-              name="with_alphathrin"
-              value={withChem.with_alphathrin}
-              onChange={handleInputChange}
-              placeholder="Batch No"
-              type="number"
-            />
-            <Label htmlFor="with_roach_force">Roach Force (L 8652)</Label>
-            <Input
-              name="with_roach_force"
-              value={withChem.with_roach_force}
-              onChange={handleInputChange}
-              placeholder="Batch No"
-              type="number"
-            />
-            <Label htmlFor="with_flushing_agent">Flushing Agent (L 4970)</Label>
-            <Input
-              name="with_flushing_agent"
-              value={withChem.with_flushing_agent}
-              onChange={handleInputChange}
-              placeholder="Batch No"
-              type="number"
-            />
-            <Label htmlFor="with_bandit">Bandit 350, SC (L 8001)</Label>
-            <Input
-              name="with_bandit"
-              value={withChem.with_bandit}
-              onChange={handleInputChange}
-              placeholder="Batch No"
-              type="number"
-            />
-            <Label htmlFor="with_fly_bait">Fly Bait (L 7579)</Label>
-            <Input
-              name="with_fly_bait"
-              value={withChem.with_fly_bait}
-              onChange={handleInputChange}
-              placeholder="Batch No"
-              type="number"
-            />
-            <Label htmlFor="other">Other</Label>
-            <Input
-              name="other"
-              value={withChem.other}
-              onChange={handleInputChange}
-              placeholder="Other"
-            />
-            {withChem.other && (
-              <>
-                <Label htmlFor="other_l_number">L Number (Other)</Label>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-gray-600 dark:text-gray-400">
+                Select Chemical/Poison
+              </Label>{" "}
+              <Select
+                value={withChem.chemical_selection}
+                onValueChange={handleChemicalSelectionChange}
+              >
+                <SelectTrigger className="w-full mt-2">
+                  <SelectValue placeholder="Select chemical/poison" />
+                </SelectTrigger>
+                <SelectContent>
+                  {service_chemicals.map((item) => (
+                    <SelectItem key={item.lNumber} value={item.title}>
+                      {item.title}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {withChem.chemical_selection === "other" && (
+              <div>
+                <Label className="text-gray-600 dark:text-gray-400">
+                  Other Chemical/Poison
+                </Label>
                 <Input
-                  name="other_l_number"
-                  value={withChem.other_l_number}
+                  name="other_chemical"
+                  value={withChem.other_chemical}
                   onChange={handleInputChange}
-                  placeholder="L Number (Other)"
-                  type="number"
+                  placeholder="Enter other chemical/poison name"
+                  className="mt-2"
                 />
-                <Label htmlFor="other_batch_no">Batch No (Other)</Label>
-                <Input
-                  name="other_batch_no"
-                  value={withChem.other_batch_no}
-                  onChange={handleInputChange}
-                  placeholder="Batch No (Other)"
-                  type="number"
-                />
-              </>
+              </div>
             )}
-            <Label htmlFor="remarks" className="col-span-2">
-              Remarks
-            </Label>
-            <textarea
-              name="remarks"
-              value={withChem.remarks}
-              onChange={(e) =>
-                setWithChem((prev) => ({ ...prev, remarks: e.target.value }))
-              }
-              placeholder="Remarks"
-              className="col-span-2 min-h-[80px] rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-            />
+
+            {(withChem.chemical_selection || withChem.other_chemical) && (
+              <div>
+                <Label className="text-gray-600 dark:text-gray-400">
+                  L Number
+                </Label>
+                <Input
+                  name="l_number"
+                  value={withChem.l_number}
+                  onChange={handleInputChange}
+                  placeholder="L Number"
+                  className="mt-2"
+                  readOnly={withChem.chemical_selection !== "other"}
+                />
+              </div>
+            )}
+
+            {(withChem.chemical_selection || withChem.other_chemical) && (
+              <div>
+                <Label className="text-gray-600 dark:text-gray-400">
+                  Batch Number
+                </Label>
+                <Input
+                  name="batch_number"
+                  value={withChem.batch_number}
+                  onChange={handleInputChange}
+                  placeholder="Enter batch number"
+                  className="mt-2"
+                />
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="remarks">Remarks</Label>
+              <textarea
+                name="remarks"
+                value={withChem.remarks}
+                onChange={(e) =>
+                  setWithChem((prev) => ({ ...prev, remarks: e.target.value }))
+                }
+                placeholder="Remarks"
+                className="mt-2 w-full min-h-[80px] rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+              />
+            </div>
           </div>
         </div>
         <Button type="submit" disabled={loading} className="mt-4">

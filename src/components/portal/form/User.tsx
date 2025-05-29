@@ -1,4 +1,4 @@
-import { ArrowRight, UserRound } from "lucide-react";
+import { ArrowRight, LoaderCircle, UserRound } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
   const [userName, setUserName] = useState<string>("");
   const [userCell, setUserCell] = useState<string>("");
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const searchUser = async (cpoNr: string): Promise<void> => {
     if (cpoNr.length === 0) return;
@@ -32,6 +33,7 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
       return;
     }
     try {
+      setLoading(true);
       const contentType = response.headers.get("Content-Type");
       if (contentType && contentType.includes("application/json")) {
         const result = await response.json();
@@ -50,6 +52,8 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
     } catch {
       setUserName("");
       setUserCell("");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,6 +103,7 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
       return;
     }
     try {
+      setLoading(true);
       const contentType = response.headers.get("Content-Type");
       if (contentType && contentType.includes("application/json")) {
         const result = await response.json();
@@ -110,11 +115,21 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
       }
     } catch {
       // ignore
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+      {loading && (
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 shadow-md rounded-full px-4 py-2">
+          <LoaderCircle className="w-5 h-5 animate-spin mr-2" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">
+            Loading...
+          </span>
+        </div>
+      )}
       <div className="w-full h-full py-12 ">
         <div className="w-full h-full flex flex-col justify-center items-center">
           <h1 className="flex justify-between w-full px-4 py-6 ">
