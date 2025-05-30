@@ -110,7 +110,7 @@ const AddStation: React.FC<StationProps> = ({ reportID, getStations }) => {
           is_accessible: is_accessible,
           accessible_reason: is_accessible ? null : accessible_reason,
           station_activity: is_accessible ? station_activity : null,
-          is_outside: is_accessible ? is_outside : null,
+          is_outside: is_outside,
           station_remark: is_accessible ? remark : null,
           station_poison_type: is_accessible ? poisonType : null,
           other: is_accessible && poisonType === "other" ? other : null,
@@ -202,7 +202,31 @@ const AddStation: React.FC<StationProps> = ({ reportID, getStations }) => {
               className="bg-white dark:bg-gray-700 mt-4 "
               onChange={(e) => setStationNr(Number(e.target.value))}
               value={stationNr}
-            />
+            />{" "}
+          </div>
+
+          <div className="px-4 py-2 mt-4 w-full max-w-md">
+            <Label
+              htmlFor="isOutside"
+              className="text-gray-600 dark:text-gray-400"
+            >
+              Inside/Outside
+            </Label>
+            <Select
+              onValueChange={(value) => setIsOutside(value === "1")}
+              value={`${is_outside ? 1 : 0}`}
+            >
+              <SelectTrigger className="w-full mt-4">
+                <SelectValue placeholder="Select Location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Inside/Outside</SelectLabel>
+                  <SelectItem value="1">Outside</SelectItem>
+                  <SelectItem value="0">Inside</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="px-4 py-2 mt-4 w-full max-w-md">
@@ -251,30 +275,7 @@ const AddStation: React.FC<StationProps> = ({ reportID, getStations }) => {
                       <SelectItem value="1">Yes</SelectItem>
                       <SelectItem value="0">No</SelectItem>
                     </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="px-4 py-2 mt-4 w-full max-w-md">
-                <Label
-                  htmlFor="clientEmail"
-                  className="text-gray-600 dark:text-gray-400"
-                >
-                  Inside/Outside
-                </Label>
-                <Select
-                  onValueChange={(value) => setIsOutside(value === "1")}
-                  value={`${is_outside ? 1 : 0}`}
-                >
-                  <SelectTrigger className="w-full mt-4">
-                    <SelectValue placeholder="Any Activity?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Inside/Outside</SelectLabel>
-                      <SelectItem value="1">Outside</SelectItem>
-                      <SelectItem value="0">Inside</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
+                  </SelectContent>{" "}
                 </Select>
               </div>
               <div className="px-4 py-2 mt-4 w-full max-w-md">
