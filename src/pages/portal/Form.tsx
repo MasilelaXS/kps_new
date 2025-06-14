@@ -91,49 +91,95 @@ const Form = () => {
     // Replace current history entry
     window.history.replaceState({ step: index }, "");
   };
-
   const currentStep = steps[currentStepIndex];
 
   return (
-    <div className="h-[84dvh] bg-white dark:bg-gray-800 overflow-y-auto">
-      {currentStep === "User" && (
-        <User handleUser={handleUser} setCounter={nextStep} />
-      )}
-      {currentStep === "ClientInfo" && (
-        <ClientInfo
-          setCounter={nextStep}
-          goToStep={goToStep}
-          handleReportID={handleReportID}
-          userCPO={userCPO}
-          userName={userName}
-          userCell={userCell}
-        />
-      )}
-      {currentStep === "Stations" && (
-        <Stations
-          reportID={reportID}
-          setCounter={nextStep}
-          prevStep={prevStep}
-        />
-      )}
-      {currentStep === "Rodent" && (
-        <Rodent reportID={reportID} setCounter={nextStep} prevStep={prevStep} />
-      )}
-      {currentStep === "Service" && (
-        <Service
-          reportID={reportID}
-          setCounter={nextStep}
-          prevStep={prevStep}
-        />
-      )}
-      {currentStep === "Signature" && (
-        <ClientSignature
-          reportID={reportID}
-          setCounter={nextStep}
-          prevStep={prevStep}
-        />
-      )}
-      {currentStep === "Success" && <Success setCounter={goToStep} />}
+    <div className="h-full bg-gray-50 dark:bg-gray-950 relative">
+      {/* Progress indicator */}
+      <div className="bg-white dark:bg-gray-900 border-b native-divider px-4 py-3">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {currentStep === "User" && "User Information"}
+            {currentStep === "ClientInfo" && "Client Details"}
+            {currentStep === "Stations" && "Station Management"}
+            {currentStep === "Rodent" && "Rodent Control"}
+            {currentStep === "Service" && "Service Details"}
+            {currentStep === "Signature" && "Signature Required"}
+            {currentStep === "Success" && "Report Complete"}
+          </h1>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {currentStepIndex + 1} of {steps.length}
+          </span>
+        </div>
+        
+        {/* Progress bar */}
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div 
+            className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Form content */}
+      <div className="h-full overflow-y-auto native-scroll">
+        <div className="min-h-full">
+          {currentStep === "User" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <User handleUser={handleUser} setCounter={nextStep} />
+            </div>
+          )}
+          {currentStep === "ClientInfo" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <ClientInfo
+                setCounter={nextStep}
+                goToStep={goToStep}
+                handleReportID={handleReportID}
+                userCPO={userCPO}
+                userName={userName}
+                userCell={userCell}
+              />
+            </div>
+          )}
+          {currentStep === "Stations" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <Stations
+                reportID={reportID}
+                setCounter={nextStep}
+                prevStep={prevStep}
+              />
+            </div>
+          )}
+          {currentStep === "Rodent" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <Rodent reportID={reportID} setCounter={nextStep} prevStep={prevStep} />
+            </div>
+          )}
+          {currentStep === "Service" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <Service
+                reportID={reportID}
+                setCounter={nextStep}
+                prevStep={prevStep}
+              />
+            </div>
+          )}
+          {currentStep === "Signature" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <ClientSignature
+                reportID={reportID}
+                setCounter={nextStep}
+                prevStep={prevStep}
+              />
+            </div>
+          )}
+          {currentStep === "Success" && (
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              <Success setCounter={goToStep} />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

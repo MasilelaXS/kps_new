@@ -122,18 +122,75 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Prevent pull-to-refresh on mobile PWAs */
-html,
-body {
-  overscroll-behavior-y: contain;
-  touch-action: pan-x pan-y;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Native mobile app styles */
+@layer components {
+  /* Disable pull-to-refresh for better PWA experience */
+  body {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  
+  /* Native-like button interactions */
+  .native-button {
+    @apply active:scale-95 transition-transform duration-150 ease-out;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Card-like containers with native shadows */
+  .native-card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Native input styles */
+  .native-input {
+    @apply rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 
+           focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200;
+  }
+  
+  /* Safe area handling */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Native scrollbar */
+  .native-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .native-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Haptic feedback simulation */
+  .haptic-feedback {
+    @apply active:scale-95 transition-all duration-100;
+  }
+  
+  /* Native-like dividers */
+  .native-divider {
+    @apply border-gray-100 dark:border-gray-800;
+  }
+  
+  /* Status bar overlay protection */
+  .status-bar-overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 100%);
   }
 }

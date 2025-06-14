@@ -7,17 +7,22 @@ import { useState } from "react";
 const PortalLayout = () => {
   const [selected, setSelected] = useState("/portal/form");
   const handleSelect = (path: string) => setSelected(path);
+  
   return (
-    <div>
+    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <TopNav
         isSelected={selected}
         handleSelect={handleSelect}
         isSearchShow={false}
       />
-      <div className="h-[84dvh]">
-        <Outlet />
+      
+      <main className="flex-1 overflow-y-auto native-scroll bg-gray-50 dark:bg-gray-950">
+        <div className="min-h-full">
+          <Outlet />
+        </div>
         <Toaster />
-      </div>
+      </main>
+      
       <BottomNav />
     </div>
   );

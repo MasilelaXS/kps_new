@@ -121,7 +121,7 @@ const User: React.FC<UserProps> = ({ setCounter, handleUser }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+    <div className="min-h-full bg-gray-50 dark:bg-gray-950">
       {loading && (
         <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 flex items-center bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 shadow-md rounded-full px-4 py-2">
           <LoaderCircle className="w-5 h-5 animate-spin mr-2" />

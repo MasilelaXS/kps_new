@@ -170,15 +170,14 @@ const AddStation: React.FC<StationProps> = ({ reportID, getStations }) => {
       setLoading(false);
     }
   };
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
+  return (    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
-          className="absolute bottom-6 right-6 z-20 bg-primary text-white dark:text-gray-800 rounded-full shadow-lg p-4 hover:bg-primary/90 transition-colors flex items-center justify-center"
+          className="fixed bottom-6 right-6 z-20 w-14 h-14 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-2xl shadow-lg hover:shadow-xl active:shadow-md transition-all duration-200 flex items-center justify-center native-button group"
           type="button"
           aria-label="Add station"
         >
-          <Plus className="w-6 h-6" />
+          <Plus className="w-6 h-6 group-active:scale-90 transition-transform duration-150" />
         </button>
       </DialogTrigger>
       <DialogContent className="flex flex-col max-w-full max-h-full rounded-none p-0 bg-white dark:bg-gray-900">

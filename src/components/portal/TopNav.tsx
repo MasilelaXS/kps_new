@@ -60,6 +60,11 @@ const TopNav: React.FC<TopNavProps> = ({
     useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [installDialogOpen, setInstallDialogOpen] = useState(false);
+    useEffect(() => {
+    // Initialize dark mode from localStorage
+    document.documentElement.classList.toggle("dark", isDarkMode);
+  }, [isDarkMode]);
+
   useEffect(() => {
     // Check if the device is iOS
     const checkIsIOS = () => {
@@ -79,34 +84,18 @@ const TopNav: React.FC<TopNavProps> = ({
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-    // Set dark mode class on initial load
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
         handleBeforeInstallPrompt
       );
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    // Update localStorage and html class when dark mode changes
-    localStorage.setItem("darkMode", isDarkMode.toString());
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
-
   const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    document.documentElement.classList.toggle("dark", newDarkMode);
+    localStorage.setItem("darkMode", newDarkMode.toString());
   };
   const handleInstallClick = async () => {
     if (isIOS) {
@@ -124,123 +113,144 @@ const TopNav: React.FC<TopNavProps> = ({
   };
 
   const showInstallButton = isIOS || deferredPrompt !== null;
-
   return (
-    <div className="border-b border-b-gray-200 dark:border-b-gray-700 h-[8dvh] px-4 w-svw z-10 py-2 flex items-center justify-between bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    <div className="safe-area-top border-b native-divider h-16 px-4 w-full z-10 py-2 flex items-center justify-between bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 relative">
+      {/* Status bar overlay for iOS */}
+      <div className="absolute top-0 left-0 right-0 h-6 status-bar-overlay pointer-events-none" />
+      
       {isDarkMode ? (
-        <img src="/logo2.png" className="h-[80%]" alt="KPS Logo Dark" />
+        <img src="/logo2.png" className="h-8 w-auto" alt="KPS Logo Dark" />
       ) : (
-        <img src="/logo.png" className="h-[80%]" alt="KPS Logo" />
+        <img src="/logo.png" className="h-8 w-auto" alt="KPS Logo" />
       )}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {/* Search Button */}
         {isSearchShow && (
-          <span className="w-10 h-10 flex items-center justify-center transition-all duration-200 ease-in-out cursor-pointer">
-            <Search />
-          </span>
+          <button className="w-11 h-11 flex items-center justify-center rounded-xl native-button haptic-feedback bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <Search size={20} strokeWidth={2} />
+          </button>
         )}
 
         {/* Menu Button */}
         <Sheet>
-          <SheetTrigger>
-            <span className="w-10 h-10 flex items-center justify-center transition-all duration-200 ease-in-out cursor-pointer">
-              <AlignJustify />
-            </span>
+          <SheetTrigger asChild>
+            <button className="w-11 h-11 flex items-center justify-center rounded-xl native-button haptic-feedback bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <AlignJustify size={20} strokeWidth={2} />
+            </button>
           </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>KPS</SheetTitle>
-              <SheetDescription>
-                <ul className="w-full overflow-hidden mt-20">
-                  {menuItems.map((item) => (
-                    <li key={item.path}>
-                      <Link
-                        to={item.path}
-                        onClick={() => handleSelect(item.path)}
-                        className={`flex gap-2 py-2 px-4 items-center transition ${
-                          isSelected === item.path
-                            ? "text-black border-r-2 dark:text-white border-black dark:border-white"
-                            : "text-gray-500 border-r-2 border-gray-100 dark:border-gray-800"
-                        }`}
-                      >
-                        {item.icon === "SquarePen" && <SquarePen />}
-                        {item.icon === "GalleryVerticalEnd" && (
-                          <GalleryVerticalEnd />
-                        )}
-                        {item.icon === "user" && <User />}
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex flex-col mt-10 gap-4 items-center">
-                  <Button
-                    onClick={toggleDarkMode}
-                    className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
-                  >
-                    {isDarkMode ? "Light Mode" : "Dark Mode"}
-                  </Button>
-
-                  {showInstallButton && (
-                    <Button
-                      onClick={handleInstallClick}
-                      className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md flex items-center justify-center gap-2"
+          <SheetContent className="w-80 bg-white dark:bg-gray-900 border-l native-divider">
+            <SheetHeader className="text-left pb-6">
+              <SheetTitle className="text-xl font-semibold">KPS</SheetTitle>
+              <SheetDescription className="text-gray-500 dark:text-gray-400">
+                Kingsway Pest Services
+              </SheetDescription>
+            </SheetHeader>
+            
+            <div className="flex flex-col h-full">
+              <ul className="space-y-2">
+                {menuItems.map((item) => (
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      onClick={() => handleSelect(item.path)}
+                      className={`flex items-center gap-4 py-3 px-4 rounded-xl transition-all duration-200 native-button ${
+                        isSelected === item.path
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-l-4 border-blue-500"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
                     >
-                      <Download size={18} /> Install App
-                    </Button>
-                  )}
-                </div>
+                      <div className={`p-2 rounded-lg ${
+                        isSelected === item.path 
+                          ? "bg-blue-100 dark:bg-blue-800/30" 
+                          : "bg-gray-100 dark:bg-gray-800"
+                      }`}>
+                        {item.icon === "SquarePen" && <SquarePen size={18} strokeWidth={2} />}
+                        {item.icon === "GalleryVerticalEnd" && <GalleryVerticalEnd size={18} strokeWidth={2} />}
+                        {item.icon === "user" && <User size={18} strokeWidth={2} />}
+                      </div>
+                      <span className="font-medium">{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
 
-                <span className="absolute bottom-10 left-0 right-0 text-center text-gray-500">
+              <div className="mt-auto space-y-3 pt-6 border-t native-divider">
+                <Button
+                  onClick={toggleDarkMode}
+                  className="w-full justify-start gap-3 py-3 px-4 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl native-button border-0"
+                >
+                  <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700">
+                    {isDarkMode ? "☀️" : "🌙"}
+                  </div>
+                  {isDarkMode ? "Light Mode" : "Dark Mode"}
+                </Button>
+
+                {showInstallButton && (
+                  <Button
+                    onClick={handleInstallClick}
+                    className="w-full justify-start gap-3 py-3 px-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-800/30 rounded-xl native-button border-0"
+                  >
+                    <div className="p-2 rounded-lg bg-green-100 dark:bg-green-800/30">
+                      <Download size={18} strokeWidth={2} />
+                    </div>
+                    Install App
+                  </Button>
+                )}
+                
+                <div className="pt-4 text-center">
                   <Link
                     to="https://dannel.co.za"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
                     Powered by Dannel Web Design
                   </Link>
-                </span>
-              </SheetDescription>
-            </SheetHeader>
+                </div>
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
 
         {/* iOS Installation Instructions Dialog */}
         <Dialog open={installDialogOpen} onOpenChange={setInstallDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Install on iOS</DialogTitle>
-              <DialogDescription>
-                Follow these steps to add KPS to your home screen:
+          <DialogContent className="sm:max-w-md native-card">
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-xl font-semibold">Install on iOS</DialogTitle>
+              <DialogDescription className="text-gray-500 dark:text-gray-400">
+                Add KPS to your home screen for quick access
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4 text-center">
-              <div className="flex items-center gap-2">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-2 flex-shrink-0">
-                  <span className="text-lg font-bold">1</span>
+            
+            <div className="space-y-4 py-6">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                  1
                 </div>
-                <p>Tap the Share button at the bottom of the screen</p>
+                <p className="text-gray-700 dark:text-gray-300">Tap the Share button at the bottom of Safari</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-2 flex-shrink-0">
-                  <span className="text-lg font-bold">2</span>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                  2
                 </div>
-                <p>Scroll down and tap "Add to Home Screen"</p>
+                <p className="text-gray-700 dark:text-gray-300">Scroll down and tap "Add to Home Screen"</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-2 flex-shrink-0">
-                  <span className="text-lg font-bold">3</span>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                  3
                 </div>
-                <p>Tap "Add" in the top right corner</p>
+                <p className="text-gray-700 dark:text-gray-300">Tap "Add" in the top right corner</p>
               </div>
-              <button
+              
+              <Button
                 onClick={() => setInstallDialogOpen(false)}
-                className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md w-full"
+                className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl native-button"
               >
-                Close
-              </button>
+                Got it!
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
